@@ -22,7 +22,7 @@ export const groqService: AIService = {
 
     return (async function* () {
       for await (const chunk of chatCompletion) {
-        yield chunk.choices[0]?.delta?.content || "";
+        yield chunk.choices[0]?.delta?.content ?? "";
       }
     })();
   },

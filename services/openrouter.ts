@@ -15,7 +15,7 @@ export const openRouterService: AIService = {
     }
 
     const stream = await openRouter.chat.send({
-      messages: messages as any,
+      messages: messages as unknown as [],
       model: process.env.OPENROUTER_MODEL ?? "google/gemini-2.0-flash-exp:free",
       stream: true,
       provider: {

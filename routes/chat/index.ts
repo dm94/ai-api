@@ -3,7 +3,7 @@ import { Readable } from 'stream';
 import { getNextService } from '../../services';
 import type { ChatMessage } from '../../types';
 
-const chat: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const chat: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.post('/', async (request, reply) => {
     const { messages } = request.body as { messages: ChatMessage[] };
     
