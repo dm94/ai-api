@@ -1,10 +1,12 @@
 import { groqService } from './groq';
 import { cerebrasService } from './cerebras';
+import { openRouterService } from './openrouter';
 import type { AIService } from '../types';
 
 const services: AIService[] = [
   groqService,
   cerebrasService,
+  openRouterService,
 ];
 
 let currentServiceIndex = 0;
