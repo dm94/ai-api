@@ -10,7 +10,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const fastify = Fastify({
-  logger: true
+  logger: {
+    level: process.env.LOG_LEVEL ?? 'warn',
+  }
 });
 
 await fastify.register(cors, {
