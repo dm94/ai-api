@@ -14,7 +14,9 @@ const fastify = Fastify({
 });
 
 await fastify.register(cors, {
-  origin: '*'
+  methods: ["POST"],
+  credentials: true,
+  origin: [process.env.API_CORS_ORIGIN ?? "*"],
 });
 
 await fastify.register(autoload, {
