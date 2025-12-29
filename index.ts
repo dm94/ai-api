@@ -1,45 +1,33 @@
-import { groqService } from './services/groq';
-import { cerebrasService } from './services/cerebras';
-import type { AIService, ChatMessage } from './types';
+import 'dotenv/config';
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import autoload from '@fastify/autoload';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-const services: AIService[] = [
-  groqService,
-  cerebrasService,
-  // Google Gemini
-  // OpenRouter
-  // otro servicio incluso local
-]
-let currentServiceIndex = 0;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-function getNextService() {
-  const service = services[currentServiceIndex];
-  currentServiceIndex = (currentServiceIndex + 1) % services.length;
-  return service;
-}
+const fastify = Fastify({
+  logger: true
+});
 
-const server = Bun.serve({
-  port: process.env.PORT ?? 3000,
-  async fetch(req) {
-    const { pathname } = new URL(req.url)
+await fastify.register(cors, {
+  origin: '*'
+});
 
-    if (req.method === 'POST' && pathname === '/chat') {
-      const { messages } = await req.json() as { messages: ChatMessage[] };
-      const service = getNextService();
+await fastify.register(autoload, {
+  dir: join(__dirname, 'routes'),
+});
 
-      console.log(`Using ${service?.name} service`);
-      const stream = await service?.chat(messages)
-
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-        },
-      });
-    }
-
-    return new Response("Not found", { status: 404 });
+const start = async () => {
+  try {
+    const port = parseInt(process.env.PORT ?? '3000');
+    await fastify.listen({ port, host: '0.0.0.0' });
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
   }
-})
+};
 
-console.log(`Server is running on ${server.url}`);
+start();
