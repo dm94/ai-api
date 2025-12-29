@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 import autoload from '@fastify/autoload';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -18,6 +19,13 @@ await fastify.register(cors, {
 
 await fastify.register(autoload, {
   dir: join(__dirname, 'routes'),
+});
+
+await fastify.register(rateLimit, {
+  global: true,
+  max: 100,
+  timeWindow: "1 minute",
+  allowList: ["127.0.0.1"],
 });
 
 fastify.addHook("preHandler", (request, reply, done) => {
