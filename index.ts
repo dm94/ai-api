@@ -20,6 +20,13 @@ await fastify.register(autoload, {
   dir: join(__dirname, 'routes'),
 });
 
+fastify.addHook("preHandler", (request, reply, done) => {
+  if (!request?.headers?.apikey || request.headers.apikey !== process.env.API_KEY) {
+    return reply.code(401).send(new Error("Invalid Api Key"));
+  }
+  done();
+});
+
 const start = async () => {
   try {
     const port = parseInt(process.env.PORT ?? '3000');
